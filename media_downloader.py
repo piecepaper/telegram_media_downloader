@@ -423,7 +423,7 @@ async def download_media(
                 ui_file_name = f"****{os.path.splitext(file_name)[-1]}"
 
             if _can_download(_type, file_formats, file_format):
-                actual_file_name = _actual_file_name(message.id, file_name) if app.check_file_by_id else file_name
+                actual_file_name = _actual_file_name(message.id, file_name) if (app.check_file_by_id or app.rename_download) else file_name
                 if _is_exist(actual_file_name):
                     file_size = os.path.getsize(actual_file_name)
                     if file_size or file_size == media_size:
