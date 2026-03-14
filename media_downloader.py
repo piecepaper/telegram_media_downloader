@@ -523,7 +523,7 @@ def _check_config() -> bool:
 async def worker(client: pyrogram.client.Client):
     """Work for download task"""
     while app.is_running:
-        try:
+        # try:
             item = await queue.get()
             message = item[0]
             node: TaskNode = item[1]
@@ -535,8 +535,8 @@ async def worker(client: pyrogram.client.Client):
                 await download_task(node.client, message, node)
             else:
                 await download_task(client, message, node)
-        except Exception as e:
-            logger.exception(f"{e}")
+        # except Exception as e:
+        #     logger.exception(f"{e}")
 
 
 async def download_chat_task(
