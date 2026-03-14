@@ -203,6 +203,8 @@ def get_download_list():
                 + f"{chat_id}"
                 + '", "id":"'
                 + f"{idx}"
+                + '", "title":"'
+                + value.get("chat_title", f"{chat_id}")
                 + '", "filename":"'
                 + os.path.basename(value["file_name"])
                 + '", "total_size":"'
