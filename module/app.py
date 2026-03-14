@@ -409,6 +409,7 @@ class Application:
         self.drop_no_audio_video: bool = False
         self.enable_download_txt: bool = False
         self.check_file_by_id: bool = False
+        self.rename_download: bool = False
 
         self.forward_limit_call = LimitCall(max_limit_call_times=33)
 
@@ -547,6 +548,10 @@ class Application:
 
         self.check_file_by_id = _config.get(
             "check_file_by_id", self.check_file_by_id
+        )
+
+        self.rename_download = _config.get(
+            "rename_download", self.rename_download
         )
 
         try:
