@@ -408,6 +408,7 @@ class Application:
         self.date_format: str = "%Y_%m"
         self.drop_no_audio_video: bool = False
         self.enable_download_txt: bool = False
+        self.check_file_by_id: bool = False
 
         self.forward_limit_call = LimitCall(max_limit_call_times=33)
 
@@ -542,6 +543,10 @@ class Application:
 
         self.enable_download_txt = get_config(
             _config, "enable_download_txt", self.enable_download_txt, bool
+        )
+
+        self.check_file_by_id = _config.get(
+            "check_file_by_id", self.check_file_by_id
         )
 
         try:

@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 import time
+from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
 import pyrogram
@@ -160,6 +161,17 @@ def _is_exist(file_path: str) -> bool:
 
 
 # pylint: disable = R0912
+def _actual_file_name(msg_id: int, file_name: str) -> str:
+    path = Path(file_name)
+    if path.is_file():
+        return str(path)
+
+    parent, suffix = path.parent, path.suffix
+    for pattern in (f"{msg_id} - *{suffix}", f"{msg_id}{suffix}"):
+        if match := next((p for p in parent.glob(pattern) if p.is_file()), None):
+            return str(match)
+    
+    return str(path)
 
 
 async def _get_media_meta(
@@ -411,8 +423,9 @@ async def download_media(
                 ui_file_name = f"****{os.path.splitext(file_name)[-1]}"
 
             if _can_download(_type, file_formats, file_format):
-                if _is_exist(file_name):
-                    file_size = os.path.getsize(file_name)
+                actual_file_name = _actual_file_name(message.id, file_name) if app.check_file_by_id else file_name
+                if _is_exist(actual_file_name):
+                    file_size = os.path.getsize(actual_file_name)
                     if file_size or file_size == media_size:
                         logger.info(
                             f"id={message.id} {ui_file_name} "
