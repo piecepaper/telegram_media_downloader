@@ -428,10 +428,7 @@ async def download_media(
                     file_size = os.path.getsize(actual_file_name)
                     if file_size or file_size == media_size:
                         if actual_file_name != file_name and app.rename_download:
-                            logger.info(
-                                f"id={message.id} {ui_file_name} "
-                                f"{_t('rename download,download rename skipped')}.\n"
-                            )
+                            logger.info(f"id={message.id} rename {actual_file_name} -> {file_name}.\n")
                             os.rename(actual_file_name, file_name)
                             return DownloadStatus.SkipDownload, None
 
@@ -453,10 +450,7 @@ async def download_media(
         )
         return DownloadStatus.FailedDownload, None
     if app.rename_download:
-        logger.info(
-            f"id={message.id} {ui_file_name} "
-            f"{_t('rename download,download skipped')}.\n"
-        )
+        logger.info(f"id={message.id} rename download skipped {ui_file_name}.\n")
         return DownloadStatus.SkipDownload, None
     if _media is None:
         return DownloadStatus.SkipDownload, None
