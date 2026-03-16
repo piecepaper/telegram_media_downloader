@@ -160,18 +160,55 @@ def _is_exist(file_path: str) -> bool:
     return not os.path.isdir(file_path) and os.path.exists(file_path)
 
 
-# pylint: disable = R0912
-def _actual_file_name(msg_id: int, file_name: str) -> str:
+def _rename_download(msg_id: int, file_name: str) -> str:
     path = Path(file_name)
-    if path.is_file():
-        return str(path)
-
     parent, suffix = path.parent, path.suffix
-    for pattern in (f"{msg_id} - *{suffix}", f"{msg_id}{suffix}"):
-        if match := next((p for p in parent.glob(pattern) if p.is_file()), None):
+    
+    # msg_id - *.suffix
+    files = [str(match) for match in parent.glob(f"{msg_id} - *{suffix}") if match.is_file()]
+
+    # msg_id.suffix
+    temp = f"{msg_id}{suffix}"
+    if os.path.isfile(temp):
+        files.append(temp)
+        
+    if len(files) == 0:
+        return
+    elif len(files) == 1:
+        if files[0] != file_name:
+            os.rename(files[0], file_name)
+        return
+
+    if file_name not in files:
+        os.rename(files[0], file_name)
+        file_name = files[0]
+
+    for file in files:
+        if file == file_name:
+            continue
+
+        logger.info(f"id={msg_id} remove {file} for repeat\n")
+        os.remove(file)
+
+
+def _get_file_name(msg_id: int, file_name: str) -> str:
+    if os.path.isfile(file_name):
+        return file_name
+    
+    file2 = f"{msg_id}{suffix}"
+    if os.path.isfile(file2):
+        return file2
+
+    path = Path(file_name)
+    parent, suffix = path.parent, path.suffix
+    for match in parent.glob(f"{msg_id} - *{suffix}"):
+        if match.is_file():
             return str(match)
     
-    return str(path)
+    return file_name
+
+
+# pylint: disable = R0912
 
 
 async def _get_media_meta(
@@ -423,21 +460,24 @@ async def download_media(
                 ui_file_name = f"****{os.path.splitext(file_name)[-1]}"
 
             if _can_download(_type, file_formats, file_format):
-                actual_file_name = _actual_file_name(message.id, file_name) if (app.check_file_by_id or app.rename_download) else file_name
+                actual_file_name = file_name
+                if app.rename_download:
+                    _rename_download(message.id, file_name)
+                elif app.check_file_by_id:
+                    actual_file_name = _get_file_name(message.id, file_name)
+
                 if _is_exist(actual_file_name):
                     file_size = os.path.getsize(actual_file_name)
-                    if file_size or file_size == media_size:
-                        if actual_file_name != file_name and app.rename_download:
-                            logger.info(f"id={message.id} rename {actual_file_name} -> {file_name}.\n")
-                            os.rename(actual_file_name, file_name)
-                            return DownloadStatus.SkipDownload, None
-
+                    if file_size == media_size:
                         logger.info(
                             f"id={message.id} {ui_file_name} "
                             f"{_t('already download,download skipped')}.\n"
                         )
 
                         return DownloadStatus.SkipDownload, None
+                    else:
+                        logger.info(f"id={message.id} remove {ui_file_name} for size not same\n")
+                        os.remove(actual_file_name)
             else:
                 return DownloadStatus.SkipDownload, None
 
