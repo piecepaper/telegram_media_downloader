@@ -496,6 +496,7 @@ async def download_media(
         return DownloadStatus.SkipDownload, None
 
     message_id = message.id
+    logger.info(f"start download {ui_file_name}.\n")
 
     for retry in range(3):
         try:
@@ -515,7 +516,7 @@ async def download_media(
 
             if temp_download_path and isinstance(temp_download_path, str):
                 _check_download_finish(media_size, temp_download_path, ui_file_name)
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(app.download_wait_duration)
                 _move_to_download_path(temp_download_path, file_name)
                 # TODO: if not exist file size or media
                 return DownloadStatus.SuccessDownload, file_name
