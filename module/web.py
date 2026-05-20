@@ -1,5 +1,6 @@
 """web ui for media download"""
 
+import json
 import logging
 import os
 import threading
@@ -187,7 +188,7 @@ def get_download_list():
     already_down = request.args.get("already_down") == "true"
 
     download_result = get_download_result()
-    result = "["
+    result = []
     for chat_id, messages in download_result.items():
         for idx, value in messages.items():
             is_already_down = value["down_byte"] == value["total_size"]
@@ -195,30 +196,17 @@ def get_download_list():
             if already_down and not is_already_down:
                 continue
 
-            if result != "[":
-                result += ","
-            download_speed = format_byte(value["download_speed"]) + "/s"
-            result += (
-                '{ "chat":"'
-                + f"{chat_id}"
-                + '", "id":"'
-                + f"{idx}"
-                + '", "title":"'
-                + value.get("chat_title", f"{chat_id}")
-                + '", "filename":"'
-                + os.path.basename(value["file_name"])
-                + '", "total_size":"'
-                + f'{format_byte(value["total_size"])}'
-                + '" ,"download_progress":"'
-            )
-            result += (
-                f'{round(value["down_byte"] / value["total_size"] * 100, 1)}'
-                + '" ,"download_speed":"'
-                + download_speed
-                + '" ,"save_path":"'
-                + value["file_name"].replace("\\", "/")
-                + '"}'
+            result.append(
+                {
+                    "chat": str(chat_id),
+                    "id": str(idx),
+                    "title": value.get("chat_title", str(chat_id)),
+                    "filename": os.path.basename(value.get("file_name", "")),
+                    "total_size": format_byte(value.get("total_size", 0)),
+                    "download_progress": str(round(value.get("down_byte", 0) / value.get("total_size", 1) * 100, 1)),
+                    "download_speed": format_byte(value.get("download_speed", 0)) + "/s",
+                    "save_path": value.get("file_name", "").replace("\\", "/"),
+                }
             )
 
-    result += "]"
-    return result
+    return json.dumps(result, ensure_ascii=False)
