@@ -516,7 +516,7 @@ async def download_media(
 
             if temp_download_path and isinstance(temp_download_path, str):
                 _check_download_finish(media_size, temp_download_path, ui_file_name)
-                await asyncio.sleep(app.download_wait_duration)
+                await asyncio.sleep(app.wait_download_duration)
                 _move_to_download_path(temp_download_path, file_name)
                 # TODO: if not exist file size or media
                 return DownloadStatus.SuccessDownload, file_name
