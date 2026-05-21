@@ -396,7 +396,7 @@ class Application:
         self.web_host: str = "0.0.0.0"
         self.web_port: int = 5000
         self.max_download_task: int = 5
-        self.wait_download_duration: int = 0.5
+        self.wait_download_duration: int = 0
         self.language = Language.EN
         self.after_upload_telegram_delete: bool = True
         self.web_login_secret: str = ""

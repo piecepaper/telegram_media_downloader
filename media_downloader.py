@@ -354,6 +354,10 @@ async def download_task(
         client, message, app.media_types, app.file_formats, node
     )
 
+    if app.wait_download_duration > 0:
+        logger.info(f"{_t('Finish download. wait')} {app.wait_download_duration}s\n")
+        await asyncio.sleep(app.wait_download_duration)
+
     if app.enable_download_txt and message.text and not message.media:
         download_status, file_name = await save_msg_to_file(app, node.chat_id, message)
 
@@ -497,9 +501,13 @@ async def download_media(
         return DownloadStatus.SkipDownload, None
 
     message_id = message.id
-    logger.info(f"start download {ui_file_name}.\n")
+    logger.info(f"{_t('Start download')}. {ui_file_name}.\n")
 
     for retry in range(3):
+        if retry > 0 and app.wait_download_duration > 0:
+            logger.info(f"{_t('Start download. wait')} {app.wait_download_duration}s\n")
+            await asyncio.sleep(app.wait_download_duration)
+
         try:
             temp_download_path = await client.download_media(
                 message,
@@ -517,7 +525,7 @@ async def download_media(
 
             if temp_download_path and isinstance(temp_download_path, str):
                 _check_download_finish(media_size, temp_download_path, ui_file_name)
-                await asyncio.sleep(app.wait_download_duration)
+                await asyncio.sleep(0.5)
                 _move_to_download_path(temp_download_path, file_name)
                 # TODO: if not exist file size or media
                 return DownloadStatus.SuccessDownload, file_name
