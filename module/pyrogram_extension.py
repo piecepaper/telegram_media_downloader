@@ -341,7 +341,7 @@ async def _upload_signal_message(
     ui_file_name = file_name
     if file_name:
         ui_file_name = (
-            f"****{os.path.splitext(file_name)[-1]}"
+            f"[{message.id}] ****{os.path.splitext(file_name)[-1]}"
             if app.hide_file_name
             else file_name
         )
@@ -643,7 +643,7 @@ async def forward_multi_media(
             ui_file_name = file_name
             if file_name:
                 ui_file_name = (
-                    f"****{os.path.splitext(file_name)[-1]}"
+                    f"[{message.id}] ****{os.path.splitext(file_name)[-1]}"
                     if app.hide_file_name
                     else file_name
                 )
