@@ -188,7 +188,7 @@ def _rename_download(msg_id: int, file_name: str) -> str:
         if file == file_name:
             continue
 
-        logger.info(f"id={msg_id} remove {file} for repeat\n")
+        logger.info(f"id={msg_id} remove {file} for repeat")
         os.remove(file)
 
 
@@ -355,7 +355,7 @@ async def download_task(
     )
 
     if app.wait_download_duration > 0:
-        logger.info(f"{_t('Finish download. wait')} {app.wait_download_duration}s\n")
+        logger.info(f"{_t('Finish download. wait')} {app.wait_download_duration}s")
         await asyncio.sleep(app.wait_download_duration)
 
     if app.enable_download_txt and message.text and not message.media:
@@ -481,7 +481,7 @@ async def download_media(
 
                         return DownloadStatus.SkipDownload, None
                     else:
-                        logger.info(f"id={message.id} remove {ui_file_name} for size not same\n")
+                        logger.info(f"id={message.id} remove {ui_file_name} for size not same")
                         os.remove(actual_file_name)
             else:
                 return DownloadStatus.SkipDownload, None
@@ -495,17 +495,17 @@ async def download_media(
         )
         return DownloadStatus.FailedDownload, None
     if app.rename_download:
-        logger.info(f"id={message.id} rename download skipped {ui_file_name}.\n")
+        logger.info(f"id={message.id} rename download skipped {ui_file_name}.")
         return DownloadStatus.SkipDownload, None
     if _media is None:
         return DownloadStatus.SkipDownload, None
 
     message_id = message.id
-    logger.info(f"{_t('Start download')}. {ui_file_name}.\n")
+    logger.debug(f"{_t('Start download')}. {ui_file_name}.")
 
     for retry in range(3):
         if retry > 0 and app.wait_download_duration > 0:
-            logger.info(f"{_t('Start download. wait')} {app.wait_download_duration}s\n")
+            logger.info(f"{_t('Start download. wait')} {app.wait_download_duration}s")
             await asyncio.sleep(app.wait_download_duration)
 
         try:
@@ -720,7 +720,7 @@ async def stop_server(client: pyrogram.Client):
 
 def setup_exit_signal_handlers():
     def signal_exit(signum, _):
-        logger.debug(f"Received signal: {signum}. Graceful Exit...")
+        logger.info(f"Received signal: {signum}. Graceful Exit...")
         raise KeyboardInterrupt()
 
     signal.signal(signal.SIGINT, signal_exit)
