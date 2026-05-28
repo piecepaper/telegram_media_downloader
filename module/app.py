@@ -19,6 +19,7 @@ from utils.format import replace_date_time, validate_title
 from utils.meta_data import MetaData
 
 _yaml = yaml.YAML()
+_yaml.width = 140 # yaml 140换行
 # pylint: disable = R0902
 
 
