@@ -385,7 +385,7 @@ async def download_task(
     ):
         ui_file_name = file_name
         if app.hide_file_name:
-            ui_file_name = f"{message.id} - ****{os.path.splitext(file_name)[-1]}"
+            ui_file_name = f"{message.id}-****{os.path.splitext(file_name)[-1]}"
         if await app.upload_file(
             file_name, update_cloud_upload_stat, (node, message.id, ui_file_name)
         ):
@@ -462,7 +462,7 @@ async def download_media(
 
             ui_file_name = file_name
             if app.hide_file_name:
-                ui_file_name = f"{message.id} - ****{os.path.splitext(file_name)[-1]}"
+                ui_file_name = f"{message.id}-****{os.path.splitext(file_name)[-1]}"
 
             if _can_download(_type, file_formats, file_format):
                 actual_file_name = file_name
