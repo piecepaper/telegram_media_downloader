@@ -583,6 +583,7 @@ def _check_config() -> bool:
             rotation="10 MB",
             retention="10 days",
             level=app.log_level,
+            format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <level>{message}</level>"
         )
     except Exception as e:
         logger.exception(f"load config error: {e}")
