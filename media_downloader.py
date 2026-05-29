@@ -501,7 +501,7 @@ async def download_media(
         return DownloadStatus.SkipDownload, None
 
     message_id = message.id
-    logger.debug(f"{_t('Start download')}. {ui_file_name}.")
+    logger.debug(f"{_t('Start download')} - {ui_file_name}.")
 
     for retry in range(3):
         if retry > 0 and app.wait_download_duration > 0:
