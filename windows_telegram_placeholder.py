@@ -11,13 +11,40 @@ TARGET_PATH = "E:\\NAS\\telegram"
 # -------------------------------------------------------
 
 
-def printd(*args: any, **kwargs: any):
-    print(f"[{datetime.now().strftime('%H:%M:%S')}]", *args, **kwargs)
+class UpdateLine:
+    __update_len = 0
+
+    def print(self, *values: object):
+        if self.__update_len > 0:
+            self.__new()
+
+        print(self.__strtime(), *values)
+
+    # 更新当前行
+    def update(self, context: str):
+        # 清除之前的内容
+        if self.__update_len > 0:
+            print(f"\r{"".ljust(self.__update_len * 2)}", end="", flush=True)
+
+        context = f"{self.__strtime()} {context}"
+        print(f"\r{context}", end="", flush=True)
+
+        self.__update_len = len(context)
+
+    # 更新并换行
+    def update_break(self, context: str):
+        self.update(context)
+        self.__new()
+
+    def __new(self):
+        print()
+        self.__update_len = 0
+
+    def __strtime(self):
+        return f"[{datetime.now().strftime('%H:%M:%S')}]"
 
 
-# Windows API 定义（用于设置稀疏文件）
-DeviceIoControl = ctypes.windll.kernel32.DeviceIoControl
-FSCTL_SET_SPARSE = 0x000900C4
+line = UpdateLine()
 
 
 def create_sparse_file(target_path, file_size):
@@ -39,9 +66,9 @@ def create_sparse_file(target_path, file_size):
 
     try:
         # 设置为稀疏文件
-        DeviceIoControl(
+        ctypes.windll.kernel32.DeviceIoControl(
             handle,
-            FSCTL_SET_SPARSE,
+            0x000900C4,
             None,
             0,
             None,
@@ -69,18 +96,18 @@ def is_sparse_file(file_path: str) -> bool:
 
 
 def main():
-    printd(f"{SOURCE_PATH} -> {TARGET_PATH}")
+    line.print(f"{SOURCE_PATH} -> {TARGET_PATH}")
 
     # 检查源路径是否存在
     if not os.path.exists(SOURCE_PATH):
-        printd(f"错误: 源路径 {SOURCE_PATH} 不存在")
+        line.print(f"错误: 源路径 {SOURCE_PATH} 不存在")
         return
 
     while True:
         curtime = time.time()
         run()
         nexttime = math.floor(curtime / 3600) * 3600 + 3600
-        printd(f"等待. 下次执行时间: [{datetime.fromtimestamp(nexttime).strftime('%H:%M:%S')}]")
+        line.print(f"下次执行时间: [{datetime.fromtimestamp(nexttime).strftime('%H:%M:%S')}]")
         time.sleep(nexttime - time.time())
 
 
@@ -91,20 +118,19 @@ def run():
         for file in files:
             file_path = os.path.join(root, file)
             if is_sparse_file(file_path):
-                # printd(f"跳过: 稀疏文件 {rel_path}")
+                # line.print(f"跳过: 稀疏文件 {rel_path}")
                 continue
 
             file_paths.append(file_path)
 
     total = len(file_paths)
+    if total == 0:
+        line.print("没有需要处理的文件.")
+        return
+
     width = len(str(total))
     fail_count = 0
-    printd(f"开始执行. 共 {total} 个文件需要处理.")
     for i in range(total):
-
-        def printdp(*args: any, **kwargs: any):
-            printd(f"[{i+1:>{width}}/{total}]", *args, **kwargs)
-
         file_path = file_paths[i]
         rel_path = os.path.relpath(file_path, SOURCE_PATH)
         dst_path = os.path.join(TARGET_PATH, rel_path)
@@ -113,17 +139,17 @@ def run():
         # 创建目标目录
         os.makedirs(os.path.dirname(dst_path), exist_ok=True)
 
-        # printdp(f"{rel_path}")
+        line.update(f"[{i+1:>{width}}/{total}] 移动文件 {rel_path}")
 
         # 使用 shutil.move 跨磁盘也可以处理
         shutil.move(file_path, dst_path)
 
         # 创建稀疏文件
         if not create_sparse_file(file_path, size):
-            printd(f"❌ 创建失败: {rel_path}")
             fail_count += 1
+            line.update_break(f"❌ 创建失败: {rel_path}")
 
-    printd(f"完成. 成功：{total - fail_count} 失败：{fail_count}")
+    line.update_break(f"完成. 成功：{total - fail_count} 失败：{fail_count}")
 
 
 if __name__ == "__main__":
