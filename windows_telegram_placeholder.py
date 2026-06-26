@@ -7,7 +7,7 @@ from datetime import datetime
 
 # ------------------- 你只需要改这 2 行 -------------------
 SOURCE_PATH = "D:\\projects\\telegram_media_downloader\\downloads"
-TARGET_PATH = "E:\\NAS\\telegram"
+TARGET_PATH = "\\\\192.168.5.100\\外接存储-st16000nm000j-2tw103\\NAS\\telegram"
 # -------------------------------------------------------
 
 

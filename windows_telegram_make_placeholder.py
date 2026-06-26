@@ -3,7 +3,7 @@ import os
 from windows_telegram_placeholder import create_sparse_file, line
 
 # ------------------- 你只需要改这 2 行 -------------------
-SOURCE_PATH = "E:\\NAS\\telegram"
+SOURCE_PATH = "\\\\192.168.5.100\\外接存储-st16000nm000j-2tw103\\NAS\\telegram"
 TARGET_PATH = "D:\\projects\\telegram_media_downloader\\downloads"
 # -------------------------------------------------------
 
