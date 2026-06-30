@@ -12,24 +12,18 @@ TARGET_PATH = "\\\\192.168.5.100\\外接存储-st16000nm000j-2tw103\\NAS\\telegr
 
 
 class UpdateLine:
-    __update_len = 0
+    __has_context = False
 
     def print(self, *values: object):
-        if self.__update_len > 0:
+        if self.__has_context > 0:
             self.__new()
 
         print(self.__strtime(), *values)
 
     # 更新当前行
     def update(self, context: str):
-        # 清除之前的内容
-        if self.__update_len > 0:
-            print(f"\r{"".ljust(self.__update_len * 2)}", end="", flush=True)
-
-        context = f"{self.__strtime()} {context}"
-        print(f"\r{context}", end="", flush=True)
-
-        self.__update_len = len(context)
+        print(f"\r\033[K{self.__strtime()} {context}", end="", flush=True)
+        self.__has_context = True
 
     # 更新并换行
     def update_break(self, context: str):
@@ -38,7 +32,7 @@ class UpdateLine:
 
     def __new(self):
         print()
-        self.__update_len = 0
+        self.__has_context = False
 
     def __strtime(self):
         return f"[{datetime.now().strftime('%H:%M:%S')}]"
@@ -107,7 +101,9 @@ def main():
         curtime = time.time()
         run()
         nexttime = math.floor(curtime / 3600) * 3600 + 3600
-        line.print(f"下次执行时间: [{datetime.fromtimestamp(nexttime).strftime('%H:%M:%S')}]")
+        line.print(
+            f"下次执行时间: [{datetime.fromtimestamp(nexttime).strftime('%H:%M:%S')}]"
+        )
         time.sleep(nexttime - time.time())
 
 
