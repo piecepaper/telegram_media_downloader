@@ -354,9 +354,14 @@ async def download_task(
         client, message, app.media_types, app.file_formats, node
     )
 
-    if download_status != DownloadStatus.SkipDownload and app.wait_download_duration > 0:
-        logger.info(f"{_t('Finish download. wait')} {app.wait_download_duration}s")
-        await asyncio.sleep(app.wait_download_duration)
+    if download_status == DownloadStatus.SkipDownload:
+        if app.skip_download_duration > 0:
+            logger.info(f"{_t('Skip download. wait')} {app.skip_download_duration}s")
+            await asyncio.sleep(app.skip_download_duration)
+    else:
+        if app.wait_download_duration > 0:
+            logger.info(f"{_t('Finish download. wait')} {app.wait_download_duration}s")
+            await asyncio.sleep(app.wait_download_duration)
 
     if app.enable_download_txt and message.text and not message.media:
         download_status, file_name = await save_msg_to_file(app, node.chat_id, message)

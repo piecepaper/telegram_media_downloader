@@ -398,6 +398,7 @@ class Application:
         self.web_port: int = 5000
         self.max_download_task: int = 5
         self.wait_download_duration: int = 0
+        self.skip_download_duration: int = 0
         self.language = Language.EN
         self.after_upload_telegram_delete: bool = True
         self.web_login_secret: str = ""
@@ -500,6 +501,9 @@ class Application:
         )
         self.wait_download_duration = _config.get(
             "wait_download_duration", self.wait_download_duration
+        )
+        self.skip_download_duration = _config.get(
+            "skip_download_duration", self.skip_download_duration
         )
 
         self.max_concurrent_transmissions = self.max_download_task * 5
