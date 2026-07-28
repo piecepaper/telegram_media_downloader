@@ -354,7 +354,7 @@ async def download_task(
         client, message, app.media_types, app.file_formats, node
     )
 
-    if app.wait_download_duration > 0:
+    if download_status != DownloadStatus.SkipDownload and app.wait_download_duration > 0:
         logger.info(f"{_t('Finish download. wait')} {app.wait_download_duration}s")
         await asyncio.sleep(app.wait_download_duration)
 

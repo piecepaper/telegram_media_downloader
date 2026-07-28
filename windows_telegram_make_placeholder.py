@@ -41,7 +41,10 @@ def main():
         # 创建目标目录
         os.makedirs(os.path.dirname(dst_path), exist_ok=True)
 
-        line.update(f"[{i+1:>{width}}/{total}] 创建稀疏文件 {rel_path}")
+        file_name, file_suffix = rel_path.rsplit(".", 1)
+        file_name = file_name.split('-', 1)[0]
+        show_path = f"{file_name}- xxxx.{file_suffix}"
+        line.update(f"[{i+1:>{width}}/{total}] 创建稀疏文件 {show_path}")
 
         # 创建稀疏文件
         if not create_sparse_file(dst_path, size):
