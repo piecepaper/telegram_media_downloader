@@ -43,7 +43,7 @@ def main():
 
         # 1.隐藏文件名名字 2.名字太长了
         file_name, file_suffix = rel_path.rsplit(".", 1)
-        file_name = file_name.split('-', 1)[0]
+        file_name = file_name.split("-", 1)[0]
         show_path = f"{file_name}- ****.{file_suffix}"
         line.update(f"[{i+1:>{width}}/{total}] 创建稀疏文件 {show_path}")
 

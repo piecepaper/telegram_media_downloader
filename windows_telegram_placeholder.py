@@ -100,11 +100,10 @@ def main():
     while True:
         curtime = time.time()
         run()
-        nexttime = math.floor(time.time() / 3600) * 3600 * 4 + (curtime % 3600)
-        line.print(
-            f"下次执行时间: [{datetime.fromtimestamp(nexttime).strftime('%H:%M:%S')}]"
-        )
-        time.sleep(nexttime - time.time())
+        nexttime = curtime + 4 * 3600
+        if nexttime < time.time():
+            line.print(f"下次执行时间: [{datetime.fromtimestamp(nexttime).strftime('%H:%M:%S')}]")
+            time.sleep(nexttime - time.time())
 
 
 def run():
@@ -137,7 +136,7 @@ def run():
 
         # 1.隐藏文件名名字 2.名字太长了
         file_name, file_suffix = rel_path.rsplit(".", 1)
-        file_name = file_name.split('-', 1)[0]
+        file_name = file_name.split("-", 1)[0]
         show_path = f"{file_name}- ****.{file_suffix}"
         line.update(f"[{i+1:>{width}}/{total}] 移动文件 {show_path}")
 
