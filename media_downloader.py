@@ -480,13 +480,13 @@ async def download_media(
                     file_size = os.path.getsize(actual_file_name)
                     if file_size == media_size:
                         logger.info(
-                            f"id={message.id} {ui_file_name} "
+                            f"chat_id={node.chat_id} id={message.id} {ui_file_name} "
                             f"{_t('already download,download skipped')}."
                         )
 
                         return DownloadStatus.SkipDownload, None
                     else:
-                        logger.info(f"id={message.id} remove {ui_file_name} for size not same")
+                        logger.info(f"chat_id={node.chat_id} id={message.id} remove {ui_file_name} for size not same")
                         os.remove(actual_file_name)
             else:
                 return DownloadStatus.SkipDownload, None
@@ -500,13 +500,13 @@ async def download_media(
         )
         return DownloadStatus.FailedDownload, None
     if app.rename_download:
-        logger.info(f"id={message.id} rename download skipped {ui_file_name}.")
+        logger.info(f"chat_id={node.chat_id} id={message.id} rename download skipped {ui_file_name}.")
         return DownloadStatus.SkipDownload, None
     if _media is None:
         return DownloadStatus.SkipDownload, None
 
     message_id = message.id
-    logger.debug(f"{_t('Start download')} - {ui_file_name}.")
+    logger.debug(f"{_t('Start download')} - chat_id={node.chat_id} id={message.id} {ui_file_name}.")
 
     for retry in range(3):
         if retry > 0 and app.wait_download_duration > 0:
