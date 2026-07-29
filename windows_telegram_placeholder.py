@@ -100,7 +100,7 @@ def main():
     while True:
         curtime = time.time()
         run()
-        nexttime = math.floor(time.time() / 3600) * 3600 + (curtime % 3600)
+        nexttime = math.floor(time.time() / 3600) * 3600 * 4 + (curtime % 3600)
         line.print(
             f"下次执行时间: [{datetime.fromtimestamp(nexttime).strftime('%H:%M:%S')}]"
         )
