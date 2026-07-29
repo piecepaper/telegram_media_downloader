@@ -101,7 +101,7 @@ def main():
         curtime = time.time()
         run()
         nexttime = curtime + 4 * 3600
-        if nexttime < time.time():
+        if nexttime > time.time():
             line.print(f"下次执行时间: [{datetime.fromtimestamp(nexttime).strftime('%H:%M:%S')}]")
             time.sleep(nexttime - time.time())
 
