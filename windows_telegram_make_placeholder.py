@@ -41,6 +41,7 @@ def main():
         # 创建目标目录
         os.makedirs(os.path.dirname(dst_path), exist_ok=True)
 
+        # 1.隐藏文件名名字 2.名字太长了
         file_name, file_suffix = rel_path.rsplit(".", 1)
         file_name = file_name.split('-', 1)[0]
         show_path = f"{file_name}- xxxx.{file_suffix}"
